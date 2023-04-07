@@ -18,14 +18,15 @@ let corsOptions = {
 
 app.use(cors(corsOptions));
 
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
+// For avoiding Payload Too Large https://stackoverflow.com/questions/19917401/error-request-entity-too-large
+// app.use(bodyParser({ limit: "500mb" }));
+app.use(bodyParser.urlencoded({ extended: true, limit: "500mb" }));
+app.use(bodyParser.json({ limit: "500mb" }));
 
 const PORT = 5001;
 
 app.get("/api/test", async (req, res) => {
-  res.status(200).json({ status: "You are connected to the API 👍"});
-
+  res.status(200).json({ status: "You are connected to the API 👍" });
 });
 
 app.post("/api/init", async (req, res) => {
@@ -39,7 +40,7 @@ app.post("/api/init", async (req, res) => {
     result = await databaseManager.init(url);
   } catch (e) {
     console.log("Error", e);
-    res.status(400).json({error: e})
+    res.status(400).json({ error: e });
   } finally {
     res.status(200).json(result);
   }
