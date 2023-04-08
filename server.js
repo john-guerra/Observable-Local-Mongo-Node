@@ -54,9 +54,16 @@ app.post("/api/insert", async (req, res) => {
 });
 
 app.post("/api/find", async (req, res) => {
+  let { db, collection, query, options } = req.body;
+  console.log("Received Find request", db, collection, query, options);
+  let result = await databaseManager.find(db, collection, query, options);
+  res.status(200).json(result);
+});
+
+app.post("/api/aggregate", async (req, res) => {
   let { db, collection, query } = req.body;
-  console.log("Received Find request", db, collection, query);
-  let result = await databaseManager.find(db, collection, query);
+  console.log("Received Aggregate request", db, collection, query);
+  let result = await databaseManager.aggregate(db, collection, query);
   res.status(200).json(result);
 });
 
@@ -68,16 +75,9 @@ app.get("/api/closeConnection", async (req, res) => {
 
 app.post("/api/delete", async (req, res) => {
   let { db, collection, query } = req.body;
-  console.log("Received Find request", db, collection, query);
+  console.log("Received Delete request", db, collection, query);
   let result = await databaseManager.delete(db, collection, query);
   res.status(200).json(result);
 });
-
-// app.get("/api/delete", async (req, res) => {
-//   let body = req.body;
-//   console.log("Received Delete request", body);
-//   let result = await databaseManager.delete();
-//   res.status(200).json(result);
-// });
 
 app.listen(PORT, console.log(`Mongodb Server running on port ${PORT}`));
