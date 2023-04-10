@@ -14,11 +14,11 @@ function MyMongoDB() {
     }
   };
 
-  myDB.find = async (dbName, collectionName, query = {}) => {
+  myDB.find = async (dbName, collectionName, query = {}, options = {}) => {
     try {
       const db = client.db(dbName);
       const collection = db.collection(collectionName);
-      let res = await collection.find(query).toArray();
+      let res = await collection.find(query, options).toArray();
       return res;
     } catch (err) {
       console.error(err);
@@ -29,10 +29,20 @@ function MyMongoDB() {
   myDB.insert = async (dbName, collectionName, data = {}) => {
     try {
       const db = client.db(dbName);
-
       const collection = await db.collection(collectionName);
-      console.log(data);
       let res = await collection.insertMany(data);
+      return res;
+    } catch (err) {
+      console.error(err);
+      return err;
+    }
+  };
+
+  myDB.aggregate = async (dbName, collectionName, query = {}) => {
+    try {
+      const db = client.db(dbName);
+      const collection = db.collection(collectionName);
+      let res = await collection.aggregate(query).toArray();
       return res;
     } catch (err) {
       console.error(err);

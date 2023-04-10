@@ -1,7 +1,7 @@
 {
   "name": "mongolocal",
   "version": "1.0.0",
-  "description": "",
+  "description": "A Mongodb Client that helps connecting to a local MongoDB from an Observable with a Node.js server acting as an intermediary.",
   "main": "mongoDBClient.js",
   "type": "module",
   "scripts": {
