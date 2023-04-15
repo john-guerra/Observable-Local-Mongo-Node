@@ -63,7 +63,13 @@ function MyMongoDB() {
   };
 
   myDB.closeConnection = async () => {
-    client.close();
+    try {
+      await client.close();
+      return true;
+    } catch (err) {
+      console.error(err);
+      return err;
+    }
   };
 
   // https://www.mongodb.com/blog/post/quick-start-nodejs-mongodb-how-to-get-connected-to-your-database
