@@ -2,11 +2,10 @@ import { MongoClient } from "mongodb";
 
 function MyMongoDB() {
   const myDB = {};
-  let client;
-  myDB.init = async (url) => {
+  let url;
+  myDB.init = async (url_) => {
     try {
-      client = new MongoClient(url, { connectTimeoutMS: 1000 });
-      await client.connect();
+      url = url_;
       return { success: true };
     } catch (err) {
       console.log(err);
@@ -15,55 +14,84 @@ function MyMongoDB() {
   };
 
   myDB.find = async (dbName, collectionName, query = {}, options = {}) => {
+    let res, client;
     try {
+      client = new MongoClient(url, { connectTimeoutMS: 1000 });
+      await client.connect();
       const db = client.db(dbName);
       const collection = db.collection(collectionName);
-      let res = await collection.find(query, options).toArray();
-      return res;
+      res = await collection.find(query, options).toArray();
     } catch (err) {
       console.error(err);
       return err;
+    } finally {
+      await client.close();
+      return res;
     }
   };
 
   myDB.insert = async (dbName, collectionName, data = {}) => {
+    let res, client;
     try {
+      client = new MongoClient(url, { connectTimeoutMS: 1000 });
+      await client.connect();
       const db = client.db(dbName);
       const collection = await db.collection(collectionName);
-      let res = await collection.insertMany(data);
-      return res;
+      res = await collection.insertMany(data);
     } catch (err) {
       console.error(err);
       return err;
+    } finally {
+      await client.close();
+      return res;
     }
   };
 
   myDB.aggregate = async (dbName, collectionName, query = {}) => {
+    let res, client;
     try {
+      client = new MongoClient(url, { connectTimeoutMS: 1000 });
+      await client.connect();
       const db = client.db(dbName);
       const collection = db.collection(collectionName);
-      let res = await collection.aggregate(query).toArray();
+      res = await collection.aggregate(query).toArray();
+      await client.close();
+
       return res;
     } catch (err) {
       console.error(err);
       return err;
+    } finally {
+      await client.close();
+      return res;
     }
   };
 
   myDB.delete = async (dbName, collectionName, query = {}) => {
+    let res, client;
     try {
+      client = new MongoClient(url, { connectTimeoutMS: 1000 });
+      await client.connect();
       const db = client.db(dbName);
       const collection = db.collection(collectionName);
-      let res = await collection.deleteMany(query);
-      return res;
+      res = await collection.deleteMany(query);
     } catch (err) {
       console.error(err);
       return err;
+    } finally {
+      await client.close();
+      return res;
     }
   };
 
   myDB.closeConnection = async () => {
-    client.close();
+    try {
+      await client.close();
+      return true;
+    } catch (err) {
+      console.error(err);
+      return err;
+    }
   };
 
   // https://www.mongodb.com/blog/post/quick-start-nodejs-mongodb-how-to-get-connected-to-your-database
